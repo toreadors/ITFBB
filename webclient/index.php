@@ -1,6 +1,7 @@
 <?php
 session_start();
-include("functions.php");
+include("functions_frontend.php");
+include("functions_backend.php");
 //echo "<pre>";
 //var_dump($_SESSION);
 //echo "</pre><br><br>";
