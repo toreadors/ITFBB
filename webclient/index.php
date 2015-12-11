@@ -1,8 +1,10 @@
 <?php
 session_start();
+include("functions.php");
 //echo "<pre>";
 //var_dump($_SESSION);
 //echo "</pre><br><br>";
+
 ?>
 
 <html>

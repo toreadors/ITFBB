@@ -159,6 +159,21 @@ function eingabe()
 	}
 }
 
+function holeletztethreadID()
+{
+	$verb_handle = verbinde("localhost", "root", "", "infosystem");
+	$lastIDSQL = "SELECT threadid FROM infos ORDER BY threadid DESC LIMIT 1";
+	$liderg = $verb_handle->query($lastIDSQL);
+	if ($liderg->num_rows == 0) $lastthreadID = 0;
+	else
+	{
+		$liderg->data_seek(0);
+		$lidrow = $liderg->fetch_assoc();
+		$lastthreadID = $lidrow['threadid'];
+	}
+	return $lastthreadID;
+}
+
 function eintragen($handle, $text, $titel)
 {
     // UmySQL Injections zu erschweren
@@ -182,7 +197,8 @@ function eintragen($handle, $text, $titel)
 			$usererg->data_seek(0);
 			$userrow = $usererg->fetch_assoc();
 			$userid = $userrow['id'];
-			$sqlfrage = "INSERT INTO infos (text, titel, timestamp, userid) VALUES ('$text', '$titel', now(), '$userid')";
+			$threadid = holeletztethreadID() + 1;
+			$sqlfrage = "INSERT INTO infos (text, titel, timestamp, userid, threadid) VALUES ('$text', '$titel', now(), '$userid', '$threadid')";
 			$handle->query($sqlfrage);
 			echo "Text: $text und Titel: $titel wurde eingetragen von $username mit ID: $userid.<br><br>";
 		}
