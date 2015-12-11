@@ -14,7 +14,6 @@ include("functions.php");
 <body>
 
 <?php
-include("functions.php");
 
 if(isset($_GET['site'])) $site=$_GET['site'];
 else $site="";
