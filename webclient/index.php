@@ -7,7 +7,7 @@ session_start();
 
 <html>
 <head>
-<title>RL-Bulletin Board</title>
+<title>ITF-Bulletin Board</title>
 </head>
 <body>
 
