@@ -1,7 +1,7 @@
 # ITFBB
-ITFBulletin Board - Ein TBS1-ANW Projekt
+ITFBulletin Board - Ein TBS1-ANW Projekt -- Teilnehmer: Max (MS) - Tim (TF) und Rene (RL)
 
-Ziele/Planun:
+Ziele/Planung:
 
 - Bulletin Board mit User Funktion - Registierung/Anmeldung mit HASH und Salt
 
