@@ -18,12 +18,12 @@ Ziele/Planun:
 Projekt Zeit: ca 8 h (24 Man-h)
  
 Ablauf:
-Planung Projektaufbau 1/2 h (TF,MS,RL)
-Aufsetzen der Entwicklungsumgebung 1/2 h (TF,MS,RL)
-Absprache Anforderungen der Komponenten 1/2 h (TF,MS,RL)
-Entwicklung 5h
-  Entwicklung GUI App 5 h (TF)
-  Entwicklung Server 1 h (RL)
-  Entwicklung Web App 4h (RL)
-  Entwicklung CLI-Programm 5 h (RL)
-Zusammenführen und Testen 1 h (TF,MS,RL)
+-Planung Projektaufbau 1/2 h (TF,MS,RL)
+-Aufsetzen der Entwicklungsumgebung 1/2 h (TF,MS,RL)
+-Absprache Anforderungen der Komponenten 1/2 h (TF,MS,RL)
+-Entwicklung 5h
+  -Entwicklung GUI App 5 h (TF)
+  -Entwicklung Server 1 h (RL)
+  -Entwicklung Web App 4h (RL)
+  -Entwicklung CLI-Programm 5 h (RL)
+-Zusammenführen und Testen 1 h (TF,MS,RL)
