@@ -26,12 +26,12 @@ Ablauf:
 
 - Entwicklung 5h
 
-  -- Entwicklung GUI App 5 h (TF)
+  - Entwicklung GUI App 5 h (TF)
   
-  -- Entwicklung Server 1 h (RL)
+  - Entwicklung Server 1 h (RL)
   
-  -- Entwicklung Web App 4h (RL)
+  - Entwicklung Web App 4h (RL)
   
-  -- Entwicklung CLI-Programm 5 h (RL)
+  - Entwicklung CLI-Programm 5 h (RL)
   
 - Zusammenführen und Testen 1 h (TF,MS,RL)
