@@ -32,6 +32,6 @@ Ablauf:
   
   - Entwicklung Web App 4h (RL)
   
-  - Entwicklung CLI-Programm 5 h (RL)
+  - Entwicklung CLI-Programm 5 h (MS)
   
 - Zusammenführen und Testen 1 h (TF,MS,RL)
