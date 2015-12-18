@@ -112,36 +112,34 @@ function zeige()
 	$row = $erg->fetch_assoc();
 	if ($erg->num_rows != 0)
 	{
-		echo "<pre>";
-		var_dump($row);
-		echo "</pre>";
 		echo "<b>Titel:</b> " . $row['titel'] . "<br><br>";
 		echo $row['text'];
 		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=reply&id=$id\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Antworten\"></FORM>";
-		echo "<br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zur¸ck\"></FORM>";
+		echo "<br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zur√ºck\"></FORM>";
 	}
 	else
 	{
 		echo "Datensatz nicht gefunden";
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zur¸ck\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zur√ºck\"></FORM>";
 	}
 }
 
-function eingabe($reply_to)
+function eingabe()
 {
 	// Wenn alle Werte da sind, trage diese ein
 	if(isset($_POST['eintragen']) and !empty($_POST['Text']) and !empty($_POST['Titel']))
 	{	
 		// verbinde mit Datenbank
 		$verb_handle = verbinde("localhost", "root", "", "infosystem");
-		eintragen($verb_handle, $_POST['Text'], $_POST['Titel'], $reply_to);
+		$threadid = holeletztethreadID() + 1;
+		eintragen($verb_handle, $_POST['Text'], $_POST['Titel'], 0, $threadid);
 		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
 	}
 	else
 	{
 		?>
 		<b>Neue Nachricht</b><br><br>
-		<form action="./index.php?site=reply&id=<?php echo $reply_to;?>" method="post">
+		<form action="./index.php?site=eingabe" method="post">
 		Author: <?php echo $_SESSION['uname'];?><br><br>
 		Titel: <input type="Text" name="Titel" size="30"><br><br>
 		Text: <textarea name="Text" cols="70" rows="12"></textarea><br><br>
@@ -151,6 +149,36 @@ function eingabe($reply_to)
 		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
 	}
 }
+
+function reply()
+{
+	// Wenn alle Werte da sind, trage diese ein
+	if(isset($_POST['eintragen']) and !empty($_POST['Text']) and !empty($_POST['Titel']))
+	{	
+		// verbinde mit Datenbank
+		$id = $_POST['id'];
+		$threadid = getthreadid($id);
+		$verb_handle = verbinde("localhost", "root", "", "infosystem");
+		eintragen($verb_handle, $_POST['Text'], $_POST['Titel'], $id, $threadid);
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
+	}
+	else
+	{
+		$id = $_GET['id'];
+		?>
+		<b>Antworten</b><br><br>
+		<form action="./index.php?site=reply" method="post">
+		Author: <?php echo $_SESSION['uname'];?><br><br>
+		Titel: <input type="Text" name="Titel" size="30"><br><br>
+		Text: <textarea name="Text" cols="70" rows="12"></textarea><br><br>
+		<input type="hidden" name="id" value="<?php echo $id;?>">
+		<input type="Submit" name="eintragen" value="Eintragen">
+		</form>
+		<?php
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
+	}
+}
+
 
 function login()
 {
@@ -240,13 +268,13 @@ function registrieren()
 		var namelaenge = this.username.value.length;
 		if(namelaenge <= '2')
 		{
-			alert('Bitte einen Namen mit mindestens 3 Zeichen w‰hlen');
+			alert('Bitte einen Namen mit mindestens 3 Zeichen w√§hlen');
 			return false;
 		} 
 		var pwlaenge = this.password.value.length;
 		if(pwlaenge <= '5')
 		{
-			alert('Bitte ein Passwort mit mindestens 6 Zeichen w‰hlen');
+			alert('Bitte ein Passwort mit mindestens 6 Zeichen w√§hlen');
 			return false;
 		} 
 		if(this.password.value != this.password2.value)
@@ -265,7 +293,7 @@ function registrieren()
 		action="./index.php?site=register" method="post">
 		Username: <input type="Text" name="username" size="10"><br>
 		Passwort eingeben: <input type="Text" name="password" size="10"><br>
-		Passwort best‰tigen: <input type="Text" name="password2" size="10">
+		Passwort best√§tigen: <input type="Text" name="password2" size="10">
 		<input type="Submit" name="register" value="Registrieren">
 		</form>
 		<?php
