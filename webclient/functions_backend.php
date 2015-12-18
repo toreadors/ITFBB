@@ -27,9 +27,20 @@ function holeletztethreadID()
 	return $lastthreadID;
 }
 
-function eintragen($handle, $text, $titel, $reply_to)
+function getthreadid($id)
 {
-	echo $reply_to;
+	$verb_handle = verbinde("localhost", "root", "", "infosystem");
+	$sqlfrage = "SELECT threadid from infos where id = '$id'";
+	$sqlerg = $verb_handle->query($sqlfrage);
+	$sqlerg->data_seek(0);
+	$ergrow = $sqlerg->fetch_assoc();
+	$threadid = $ergrow['threadid'];
+	return $threadid	;
+}
+
+
+function eintragen($handle, $text, $titel, $reply_to, $threadid)
+{
     // UmySQL Injections zu erschweren
     $titel = $handle->real_escape_string($titel);
     $text = $handle->real_escape_string($text);
@@ -46,12 +57,11 @@ function eintragen($handle, $text, $titel, $reply_to)
 		$usererg->data_seek(0);
 		$userrow = $usererg->fetch_assoc();
 		$userid = $userrow['id'];
-		if ($reply_to == 0) $threadid = holeletztethreadID() + 1;
-		else $threadid = $_GET['id'];
 		$sqlfrage = "INSERT INTO infos (text, titel, timestamp, userid, threadid, inreplyto) VALUES ('$text', '$titel', now(), '$userid', '$threadid', '$reply_to')";
+		//Debug
 		echo $sqlfrage;
 		$handle->query($sqlfrage);
-		echo "<br>Text: $text und Titel: $titel wurde eingetragen von $username mit ID: $userid.<br><br>";
+		echo "<br>Eintrag erfolgt.<br><br>";
 	}
 }
 
