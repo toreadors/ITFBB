@@ -21,7 +21,7 @@ else $site="";
 
 switch($site) {
 	case "eingabe":
-		eingabe(0);
+		eingabe();
 		break;
 	case "zeige":
 		zeige();
@@ -36,8 +36,7 @@ switch($site) {
 		raushier();
 		break;
 	case "reply":
-		$id = intval($_GET['id']);
-		eingabe($id);
+		reply();
 		break;
 	default:
 		ausgabe();
