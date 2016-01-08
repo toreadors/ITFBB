@@ -1,6 +1,7 @@
-#import mysql.connector
+ubgggggg#import mysql.connector
 import datetime
 import sys
+import argparse
 
 '''
 Ablauf:
@@ -9,18 +10,15 @@ Ablauf:
 
 '''
 
-# get total number of arguments passed
-total = len(sys.argv)
+# Parse all the arguments!
+parser = parse.ArgumentParser(description='CLI for itfbb'
 
-#get arguments list
-cmdargs = str(sys.argv)
+parser.add_argument('-h','--host', help='Hostname',required=True)
+parser.add_argument('-u','--user', help='Username',required=True)
+parser.add_argument('-p','--password', help='Password'required=True)
+# parser.add_argument('-','--', help='')
 
-# durchgehen aller Argumenten
 
-
-
-#user = input("Please enter your username: ")
-#pass = input("Please enter your password: ")
 
 # Verbinde zur DB
 # cnx_db = mysql.connector.connect(user=$user, password=$pass, host='localhost', database='infosystem')
