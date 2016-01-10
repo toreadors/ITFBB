@@ -16,8 +16,10 @@ function ausgabe()
 		$sortfield = "timestamp";
 		$sortart = "DESC";
 	}
-	$sqlfrage = "SELECT infos.id,titel,infos.timestamp,username FROM infos join users on userid = users.id ORDER BY $sortfield $sortart";
+	$sqlfrage = "SELECT infos.id,titel,lastchange.timestamp, username FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE inreplyto = 0 ORDER BY $sortfield $sortart";
+	
 	$erg = $handle->query($sqlfrage);
+	
 	$erg->data_seek(0);
 	$anz_rows = $erg->num_rows;
 	if ($anz_rows > 0)
@@ -38,7 +40,7 @@ function ausgabe()
 		
 		echo "<table borders=0>";
 		echo "<tr bgcolor=\"#ACC8F0\"><td width=\"56%\"><a href=\".?sort_field=titel&sort=DESC\">Titel</a></td>";
-		echo "<td width=\"22%\"><a href=\".?sort_field=timestamp&sort=ASC\">Gepostet am</a></td>";
+		echo "<td width=\"22%\"><a href=\".?sort_field=timestamp&sort=ASC\">Letzte &Auml;nderung</a></td>";
 		echo "<td width=\"22%\" align=\"right\">von</td></tr>";
 		for($count=$anz_rows; $count > 0; $count--)
 		{
@@ -53,7 +55,7 @@ function ausgabe()
 				echo "<tr bgcolor=\"#BDBDBD\">";
 			}
 						
-			echo "<td><a href=.?site=zeige&id=" . $row['id'] . ">" . $row['titel'] . "</a></td>" ;
+			echo "<td><a href=.?site=zeigethread&id=" . $row['id'] . ">" . $row['titel'] . "</a></td>" ;
 			echo "<td>" . $row['timestamp'] . "</td>";
 			echo "<td align=\"right\">" . $row['username'] . "</td></tr>";	
 		}
@@ -101,6 +103,62 @@ function ausgabe()
 		}		
 	}
 }
+
+function zeigethread()
+{
+	$handle = verbinde("localhost", "root", "", "infosystem");
+	$id = $handle->real_escape_string($_GET['id']);
+	$threadid = getthreadid($id);
+	echo "Thread ID $threadid";
+	
+	
+	$sqlfrage = "SELECT infos.id,titel,lastchange.timestamp, username FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE infos.threadid = '$threadid' ORDER BY id ASC";
+	
+	
+	$erg = $handle->query($sqlfrage);
+	
+	$erg->data_seek(0);
+	$anz_rows = $erg->num_rows;
+	
+	if ($anz_rows > 0)
+	{
+		
+		echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">";
+		echo "<b>Threadansicht</b>";
+		echo " <INPUT TYPE=\"submit\" VALUE=\"Aktualisieren\">";
+		echo "</FORM><br>";
+		
+		echo "<table borders=0>";
+		echo "<tr bgcolor=\"#ACC8F0\"><td width=\"56%\"><a href=\".?sort_field=titel&sort=DESC\">Titel</a></td>";
+		echo "<td width=\"22%\"><a href=\".?sort_field=timestamp&sort=ASC\">Letzte &Auml;nderung</a></td>";
+		echo "<td width=\"22%\" align=\"right\">von</td></tr>";
+		for($count=$anz_rows; $count > 0; $count--)
+		{
+			$row = $erg->fetch_assoc();
+			
+			if(bcmod($count,'2')==0)
+			{
+				echo "<tr bgcolor=\"#F2F2F2\">";
+			}
+			else
+			{
+				echo "<tr bgcolor=\"#BDBDBD\">";
+			}
+						
+			echo "<td><a href=.?site=zeigethread&id=" . $row['id'] . ">" . $row['titel'] . "</a></td>" ;
+			echo "<td>" . $row['timestamp'] . "</td>";
+			echo "<td align=\"right\">" . $row['username'] . "</td></tr>";	
+		}
+		echo "</table>";
+	}
+		
+	echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
+	
+
+	
+}
+
+
 
 function zeige()
 {

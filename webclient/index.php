@@ -26,6 +26,9 @@ switch($site) {
 	case "zeige":
 		zeige();
 		break;
+	case "zeigethread":
+		zeigethread();
+		break;
 	case "register":
 		registrieren();
 		break;

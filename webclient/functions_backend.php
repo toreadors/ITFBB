@@ -35,7 +35,7 @@ function getthreadid($id)
 	$sqlerg->data_seek(0);
 	$ergrow = $sqlerg->fetch_assoc();
 	$threadid = $ergrow['threadid'];
-	return $threadid	;
+	return $threadid;
 }
 
 
@@ -57,10 +57,11 @@ function eintragen($handle, $text, $titel, $reply_to, $threadid)
 		$usererg->data_seek(0);
 		$userrow = $usererg->fetch_assoc();
 		$userid = $userrow['id'];
+		// Eintrag in infos und lastchange Tabelle
 		$sqlfrage = "INSERT INTO infos (text, titel, timestamp, userid, threadid, inreplyto) VALUES ('$text', '$titel', now(), '$userid', '$threadid', '$reply_to')";
-		//Debug
-		echo $sqlfrage;
 		$handle->query($sqlfrage);
+		$lcfrage = "INSERT INTO lastchange VALUES ('$threadid', now()) ON DUPLICATE KEY UPDATE threadid = '$threadid', timestamp=now()";
+		$handle->query($lcfrage);
 		echo "<br>Eintrag erfolgt.<br><br>";
 	}
 }
