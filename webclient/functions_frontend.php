@@ -24,14 +24,12 @@ function ausgabe()
 	$anz_rows = $erg->num_rows;
 	if ($anz_rows > 0)
 	{
-		echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">";
-		echo "<b>Bulletin Board by RL</b>";
-		echo " <INPUT TYPE=\"submit\" VALUE=\"Aktualisieren\">";
-		echo "</FORM><br>";
+		echo "<b>ITFBB: Ein Bulletin Board</b><br><br>";
+	
 
 		if(isset($_SESSION['uname']))
 		{
-			echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=eingabe\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Neue Nachricht\"></FORM>";
+			echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=eingabe\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Neues Thema\"></FORM>";
 		}
 		else
 		{
@@ -76,13 +74,10 @@ function ausgabe()
 	}
 	else
 	{
-		echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">";
-		echo "<b>Bulletin Board by RL</b>";
-		echo " <INPUT TYPE=\"submit\" VALUE=\"Aktualisieren\">";
-		echo "</FORM><br>";
+		echo "<b>ITFBB: Ein Bulletin Board</b><br><br>";
 		if(isset($_SESSION['uname']))
 		{
-			echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=eingabe\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Neue Nachricht\"></FORM><br>";
+			echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=eingabe\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Neues Thema\"></FORM><br>";
 		}
 		else
 		{
@@ -109,29 +104,20 @@ function zeigethread()
 	$handle = verbinde("localhost", "root", "", "infosystem");
 	$id = $handle->real_escape_string($_GET['id']);
 	$threadid = getthreadid($id);
-	echo "Thread ID $threadid";
-	
-	
-	$sqlfrage = "SELECT infos.id,titel,lastchange.timestamp, username FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE infos.threadid = '$threadid' ORDER BY id ASC";
-	
-	
+	$threadtitel = getthreadtitle($threadid);
+	$sqlfrage = "SELECT infos.id,titel,infos.timestamp, username,text,inreplyto FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE infos.threadid = '$threadid' ORDER BY id ASC";
 	$erg = $handle->query($sqlfrage);
-	
 	$erg->data_seek(0);
 	$anz_rows = $erg->num_rows;
 	
 	if ($anz_rows > 0)
 	{
-		
-		echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">";
-		echo "<b>Threadansicht</b>";
-		echo " <INPUT TYPE=\"submit\" VALUE=\"Aktualisieren\">";
-		echo "</FORM><br>";
-		
+		echo "<FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
 		echo "<table borders=0>";
-		echo "<tr bgcolor=\"#ACC8F0\"><td width=\"56%\"><a href=\".?sort_field=titel&sort=DESC\">Titel</a></td>";
+		echo "<tr bgcolor=\"#ACC8F0\"><td width=\"56%\"><b>Thread: $threadtitel</b></td>";
 		echo "<td width=\"22%\"><a href=\".?sort_field=timestamp&sort=ASC\">Letzte &Auml;nderung</a></td>";
 		echo "<td width=\"22%\" align=\"right\">von</td></tr>";
+		$lastpost="init";
 		for($count=$anz_rows; $count > 0; $count--)
 		{
 			$row = $erg->fetch_assoc();
@@ -144,18 +130,21 @@ function zeigethread()
 			{
 				echo "<tr bgcolor=\"#BDBDBD\">";
 			}
-						
-			echo "<td><a href=.?site=zeigethread&id=" . $row['id'] . ">" . $row['titel'] . "</a></td>" ;
+			//if($row['inreplyto']==0) $spacer = "";
+			//if($lastpost==$row['inreplyto']) $spacer = ">";
+			
+			echo "<td><b>" . $row['titel'] . "</b></a>";
+			echo "<br>" . $row['text'];
+			
+			echo "</td>";
 			echo "<td>" . $row['timestamp'] . "</td>";
 			echo "<td align=\"right\">" . $row['username'] . "</td></tr>";	
+			$lastpost = $row['id'];
 		}
 		echo "</table>";
 	}
-		
-	echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
 	
-
-	
+	echo "<br><FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=reply&id=$lastpost\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Antworten\"></FORM>";
 }
 
 
@@ -173,12 +162,12 @@ function zeige()
 		echo "<b>Titel:</b> " . $row['titel'] . "<br><br>";
 		echo $row['text'];
 		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=reply&id=$id\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Antworten\"></FORM>";
-		echo "<br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
+		echo "<br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
 	}
 	else
 	{
 		echo "Datensatz nicht gefunden";
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"Zurück\"></FORM>";
 	}
 }
 
@@ -191,7 +180,7 @@ function eingabe()
 		$verb_handle = verbinde("localhost", "root", "", "infosystem");
 		$threadid = holeletztethreadID() + 1;
 		eintragen($verb_handle, $_POST['Text'], $_POST['Titel'], 0, $threadid);
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
 	}
 	else
 	{
@@ -204,7 +193,7 @@ function eingabe()
 		<input type="Submit" name="eintragen" value="Eintragen">
 		</form>
 		<?php
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
 	}
 }
 
@@ -233,7 +222,7 @@ function reply()
 		<input type="Submit" name="eintragen" value="Eintragen">
 		</form>
 		<?php
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
 	}
 }
 
@@ -260,18 +249,17 @@ function login()
 			$hpw = $lrow['password'];
 			$salz= $lrow['salz'];
 		
-			echo "User: $uname mit Passwort: $pw <br>";
+			echo "User: $uname<br>";
 			if (pruefe_pw($pw,$hpw,$salz)) 
 			{ 
 				echo "wurde erfolgreich eingeloggt.";
 				$_SESSION['uname'] = $uname;
-				echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
+				echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
 			}
 			else 
 			{
 				echo "Falsches Paswort!";
-				echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=login\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Nochmal versuchen\"></FORM>";
-				
+				echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "?site=login\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"Nochmal versuchen\"></FORM>";	
 			}
 		}
 	}
@@ -285,7 +273,7 @@ function login()
 		<input type="Submit" name="login" value="Login">
 		</form>
 		<?php
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
 	}
 }
 
@@ -293,7 +281,7 @@ function raushier()
 {
 	session_destroy();
 	echo "Sie wurden ausgeloggt!.";
-	echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"zur Startseite\"></FORM>";
+	echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"zur Startseite\"></FORM>";
 }
 
 function registrieren()
@@ -315,7 +303,7 @@ function registrieren()
 		echo "User $uname wurde angelegt";
 		
 		echo "<br>-----------<br>";
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"OK\"></FORM>";
 	}
 	else
 	{
@@ -355,7 +343,7 @@ function registrieren()
 		<input type="Submit" name="register" value="Registrieren">
 		</form>
 		<?php
-		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
+		echo "<br><br><FORM action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"get\"><INPUT TYPE=\"submit\" VALUE=\"abbrechen\"></FORM>";
 	}
 }
 

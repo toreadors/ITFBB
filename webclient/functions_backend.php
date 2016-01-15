@@ -39,6 +39,18 @@ function getthreadid($id)
 }
 
 
+function getthreadtitle($threadid)
+{
+	$verb_handle = verbinde("localhost", "root", "", "infosystem");
+	$sqlfrage = "SELECT titel from infos where threadid = '$threadid' and inreplyto=0";
+	$sqlerg = $verb_handle->query($sqlfrage);
+	$sqlerg->data_seek(0);
+	$ergrow = $sqlerg->fetch_assoc();
+	$threadtitel = $ergrow['titel'];
+	return $threadtitel;
+}
+
+
 function eintragen($handle, $text, $titel, $reply_to, $threadid)
 {
     // UmySQL Injections zu erschweren
