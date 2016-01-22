@@ -24,7 +24,7 @@ parser.add_argument('-ptt','--post_text', help='Posting Text', action'store', de
 args = parser.parse_args()
 
 # Verbinde zur DB
-connect_db = mysql.connector.connect(user='root', password='', host='localhost', database='infosystem')
+infosystem = mysql.connector.connect(user='root', password='', host='localhost', database='infosystem')
 except mysql.connector.Error as err:
   if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
     print("Something is wrong with your user name or password")
@@ -33,28 +33,41 @@ except mysql.connector.Error as err:
   else:
     print(err)
 else:
-# im "switch-case" dann die Querys absenden je nach gesetzten Argumenten
 
-if(isset(args.username)):
-	print "Bitte Benutzername angeben."
-elif(isset(args.password)):
-	print "Bitte Kennwort angeben."
+cursor = infosystem.cursor()
+# User Auth
+
+# if(isset(args.username)):
+#	print "Bitte Benutzername angeben."
+# elif(isset(args.password)):
+#	print "Bitte Kennwort angeben."
+
+
+
+# liste Threads auf
+# lese Thread
+# poste Antwort in Thread
+# erstelle neuen Thread
 
 
 if args.list:
-	# liste threads auf
+	query_list = ("SELECT infos.id,titel,lastchange.timestamp, username FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE inreplyto = 0 ORDER BY timestamp DESC")
+	cursor.execute(query_list)
+	
 elif args.read:
-	# lese thread
+	query_read = ("SELECT infos.id,titel,infos.timestamp, username,text,inreplyto FROM infos JOIN users ON userid = users.id JOIN lastchange ON infos.threadid = lastchange.threadid WHERE infos.threadid = '$threadid' ORDER BY id ASC")
+	cursor.execute(query_read)
+
 elif args.answer:
-	# poste antwort in thread
+	query_answer = ()
+	cursor.execute(query_answer)
+	
 elif args.post:
-	# erstelle neuen thread
-elif args.thread_titel:
-	# Titel eines neuen Threads
-elif args.post_titel:
-	# Titel eines neuen Postings
-elif args.post_text:
-	# Textbody eines Threads/Postings
+	query_post = ()
+	cursor.execute(query_post)
+
+cursor.close()
+infosystem.close()
 
 
 
