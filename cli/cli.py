@@ -1,4 +1,5 @@
 import mysql.connector
+from mysql.connector import errorcode
 import datetime
 import sys
 import argparse
@@ -16,15 +17,16 @@ parser.add_argument('-r','--read', help='read thread, required ID', action='stor
 parser.add_argument('-a','--answer', help='answer to thread, required ID', action='store', dest='')
 
 parser.add_argument('-p','--post', help='post new thread', action='store', dest='')
-parser.add_argument('-tt','--thread_titel', help='Thread Titel', action'store', dest='thread_titel')
-parser.add_argument('-pti','--post_titel', help='Posting Titel', action'store', dest='post_titel')
-parser.add_argument('-ptt','--post_text', help='Posting Text', action'store', dest='post_text')
+# parser.add_argument('-tt','--thread_titel', help='Thread Titel', action'store', dest='thread_titel')
+# parser.add_argument('-pti','--post_titel', help='Posting Titel', action'store', dest='post_titel')
+# parser.add_argument('-ptt','--post_text', help='Posting Text', action'store', dest='post_text')
 
 
 args = parser.parse_args()
 
 # Verbinde zur DB
-infosystem = mysql.connector.connect(user='root', password='', host='localhost', database='infosystem')
+try:
+infosystem = mysql.connector.connect(user='itf13b', password='schule', host='192.168.42.145', database='infosystem')
 except mysql.connector.Error as err:
   if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
     print("Something is wrong with your user name or password")
@@ -68,12 +70,6 @@ elif args.post:
 
 cursor.close()
 infosystem.close()
-
-
-
-
-
-
 
 connect_db.close()
 
